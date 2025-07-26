@@ -1,0 +1,994 @@
+<!-- views/dashboard.ejs - صفحة لوحة التحكم المحدثة والمرتبة -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - نقاء</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      font-family: 'Noto Sans Arabic', 'Space Grotesk', sans-serif; 
+    }
+    
+    /* تنسيقات اللوقو */
+    .logo-img {
+      height: 45px;
+      width: auto;
+      filter: drop-shadow(0 0 20px rgba(36, 132, 242, 0.3));
+      transition: var(--transition-smooth);
+      animation: pulse-logo 3s ease-in-out infinite;
+      margin-left: var(--space-sm);
+    }
+    
+    .logo-img:hover {
+      filter: drop-shadow(0 0 30px rgba(36, 132, 242, 0.5));
+      transform: scale(1.05);
+    }
+    
+    @keyframes pulse-logo {
+      0%, 100% { 
+        filter: drop-shadow(0 0 20px rgba(36, 132, 242, 0.3));
+        transform: scale(1);
+      }
+      50% { 
+        filter: drop-shadow(0 0 30px rgba(36, 132, 242, 0.4));
+        transform: scale(1.02);
+      }
+    }
+    
+    /* تحسين الـ Action Buttons */
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+    
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-lg);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .action-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: var(--transition-smooth);
+    }
+    
+    .action-btn:hover {
+      transform: translateY(-4px);
+      text-decoration: none;
+    }
+    
+    .action-btn:hover::before {
+      opacity: 1;
+    }
+    
+    .action-icon {
+      font-size: 3rem;
+      margin-bottom: var(--space-sm);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .action-text {
+      font-weight: 600;
+      font-size: 1.1rem;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    
+    .action-desc {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-top: var(--space-xs);
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    
+    /* أنواع مختلفة من الأزرار */
+    .btn-log {
+      background: var(--gradient-primary);
+      color: white;
+      box-shadow: var(--shadow-glow);
+    }
+    
+    .btn-log::before {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    }
+    
+    .btn-emergency {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      box-shadow: 0 8px 32px rgba(255, 107, 107, 0.4);
+      animation: pulse-emergency 3s ease-in-out infinite;
+    }
+    
+    .btn-emergency::before {
+      background: linear-gradient(135deg, #ff5252, #ff1744);
+    }
+    
+    @keyframes pulse-emergency {
+      0%, 100% { 
+        box-shadow: 0 8px 32px rgba(255, 107, 107, 0.4);
+        transform: scale(1);
+      }
+      50% { 
+        box-shadow: 0 12px 48px rgba(255, 107, 107, 0.6);
+        transform: scale(1.02);
+      }
+    }
+    
+    .btn-relapse {
+      background: var(--gradient-card);
+      color: var(--text-secondary);
+      border: 2px solid var(--border-danger);
+    }
+    
+    .btn-relapse::before {
+      background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 71, 87, 0.2));
+    }
+    
+    .btn-relapse:hover {
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+    
+    /* تحسين Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+      margin: var(--space-xl) 0;
+    }
+    
+    .stat-card {
+      background: var(--gradient-card);
+      border: 1px solid var(--border-primary);
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-primary);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-accent);
+    }
+    
+    .stat-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .stat-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-sm);
+      opacity: 0.8;
+    }
+    
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: var(--space-xs);
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+    }
+    
+    .stat-label {
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 1rem;
+    }
+    
+    .stat-sublabel {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: var(--space-xs);
+    }
+    
+    /* Modal تحسينات */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      background: var(--gradient-card);
+      border: 1px solid var(--border-primary);
+      border-radius: var(--radius-xl);
+      padding: var(--space-2xl);
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-xl);
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .modal-overlay.show .modal-content {
+      transform: scale(1) translateY(0);
+    }
+    
+    /* تحسين Responsive */
+    @media (max-width: 768px) {
+      .action-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-sm);
+      }
+      
+      .stat-card {
+        padding: var(--space-md);
+      }
+      
+      .stat-value {
+        font-size: 2rem;
+      }
+      
+      .stat-icon {
+        font-size: 2rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+      <div class="container">
+        <a href="/dashboard" class="logo">
+          <img src="/image/1.png" alt="نقاء" class="logo-img">
+          <span>نقاء</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="/dashboard" style="color: var(--primary-light);">الرئيسية</a></li>
+          <li><a href="/log">تسجيل يومي</a></li>
+          <li><a href="/resources">المصادر</a></li>
+          <li><a href="/settings">الإعدادات</a></li>
+          <li>
+            <form action="/logout" method="POST" style="display: inline;">
+              <button type="submit" class="btn btn-secondary">تسجيل خروج</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="container section">
+      <!-- Welcome Header -->
+      <div class="fade-in" style="text-align: center; margin-bottom: var(--space-2xl);">
+        <h1 style="margin-bottom: var(--space-md); font-size: clamp(2rem, 5vw, 3rem);">
+          مرحبًا، <%= user.username %>! 
+          <span style="font-size: 1.5em; margin-right: var(--space-sm);">👋</span>
+        </h1>
+        <p style="color: var(--text-tertiary); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">
+          نحن سعداء برؤيتك اليوم. كل يوم جديد هو فرصة للنمو والتحسن.
+        </p>
+      </div>
+
+      <!-- Welcome Banner for New Users -->
+      <% if (typeof req !== 'undefined' && req.query && req.query.welcome === 'true') { %>
+        <div class="card fade-in" style="background: var(--gradient-success); color: white; text-align: center; margin-bottom: var(--space-2xl);">
+          <div style="position: relative; z-index: 1;">
+            <h2 style="margin-bottom: var(--space-md); font-size: 1.8rem; color: white;">
+              <span style="margin-left: var(--space-sm);">🎉</span>
+              مرحبًا بك في نقاء!
+            </h2>
+            <p style="font-size: 1.1rem; margin-bottom: var(--space-lg); color: rgba(255,255,255,0.9); line-height: 1.6;">
+              تم إنشاء حسابك بنجاح. رحلتك نحو حياة أفضل تبدأ الآن!<br>
+              ابدأ بتسجيل حالتك اليومية واستكشف المصادر المفيدة.
+            </p>
+            <div style="display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap;">
+              <a href="/log" class="btn" style="background: white; color: var(--success-dark); padding: var(--space-sm) var(--space-lg); font-weight: 600;">
+                <span>📝</span>
+                <span>ابدأ أول تسجيل</span>
+              </a>
+              <a href="/resources" class="btn" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); padding: var(--space-sm) var(--space-lg);">
+                <span>📚</span>
+                <span>استكشف المصادر</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Streak Display - محسن -->
+      <div class="streak-display scale-in" style="position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-full); font-size: 0.8rem;">
+          <% if (streak >= 365) { %>
+            👑 أسطوري
+          <% } else if (streak >= 180) { %>
+            🏆 استثنائي  
+          <% } else if (streak >= 90) { %>
+            🌟 ممتاز
+          <% } else if (streak >= 30) { %>
+            🎯 رائع
+          <% } else if (streak >= 7) { %>
+            🔥 قوي
+          <% } else if (streak >= 1) { %>
+            ✨ بداية
+          <% } %>
+        </div>
+        
+        <div class="streak-number"><%= streak %></div>
+        <div class="streak-label">
+          <%= streak === 1 ? 'يوم نظيف' : streak === 2 ? 'يومان نظيفان' : 'أيام نظيفة' %>
+        </div>
+        
+        <% if (streak >= 1) { %>
+          <div style="margin-top: var(--space-md); font-size: 1rem; opacity: 0.9; line-height: 1.4;">
+            <% if (streak >= 365) { %>
+              🎉 سنة كاملة من النقاء! إنجاز تاريخي
+            <% } else if (streak >= 180) { %>
+              💫 نصف سنة رائعة! أنت تحقق المعجزات
+            <% } else if (streak >= 90) { %>
+              🌟 ثلاثة أشهر مذهلة! تحول حقيقي في حياتك
+            <% } else if (streak >= 30) { %>
+              🎯 شهر كامل رائع! عادات إيجابية قوية
+            <% } else if (streak >= 7) { %>
+              🔥 أسبوع قوي! أنت على الطريق الصحيح
+            <% } else { %>
+              ✨ كل يوم يمر هو انتصار جديد!
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Actions Grid - محسن ومرتب -->
+      <div class="card slide-up" style="transition-delay: 0.1s; margin: var(--space-2xl) 0;">
+        <div style="text-align: center; margin-bottom: var(--space-xl);">
+          <h2 style="margin-bottom: var(--space-sm);">
+            <span style="margin-left: var(--space-sm);">⚡</span>
+            ماذا تريد أن تفعل اليوم؟
+          </h2>
+          <p style="color: var(--text-tertiary);">اختر الإجراء المناسب لموقفك الحالي</p>
+        </div>
+        
+        <div class="action-grid">
+          <!-- Daily Log Button -->
+          <a href="/log" class="action-btn btn-log">
+            <div class="action-icon">📝</div>
+            <div class="action-text">تسجيل حالة اليوم</div>
+            <div class="action-desc">سجل مزاجك ومستوى الرغبة وأنشطتك اليومية</div>
+          </a>
+
+          <!-- Emergency Help Button -->
+          <button class="action-btn btn-emergency" id="emergency-btn">
+            <div class="action-icon">🆘</div>
+            <div class="action-text">مساعدة طارئة</div>
+            <div class="action-desc">احصل على دعم فوري وتقنيات تهدئة</div>
+          </button>
+
+          <!-- Resources Button -->
+          <a href="/resources" class="action-btn" style="background: var(--gradient-card); color: var(--text-secondary); border: 1px solid var(--border-primary);">
+            <div class="action-icon" style="color: var(--info);">📚</div>
+            <div class="action-text">استكشف المصادر</div>
+            <div class="action-desc">آيات، نصائح، ومحتوى مفيد للتحفيز</div>
+          </a>
+
+          <!-- Relapse Button -->
+          <button class="action-btn btn-relapse" id="relapse-btn">
+            <div class="action-icon" style="color: var(--danger);">🔄</div>
+            <div class="action-text">تسجيل انتكاسة</div>
+            <div class="action-desc">إعادة تعيين العداد والبدء من جديد</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="stats-grid slide-up" style="transition-delay: 0.2s;">
+        <div class="stat-card">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-value"><%= Math.max(streak, user.longestStreak || 0) %></div>
+          <div class="stat-label">أطول سلسلة</div>
+          <div class="stat-sublabel">أفضل إنجاز حققته</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-value"><%= Math.floor((Date.now() - new Date(user.createdAt)) / (1000 * 60 * 60 * 24)) %></div>
+          <div class="stat-label">أيام العضوية</div>
+          <div class="stat-sublabel">منذ انضمامك لنقاء</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-value"><%= recentLogs ? recentLogs.length : 0 %></div>
+          <div class="stat-label">التسجيلات</div>
+          <div class="stat-sublabel">عدد تسجيلاتك الإجمالية</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">💪</div>
+          <div class="stat-value">
+            <% if (recentLogs && recentLogs.length > 0) { %>
+              <%= Math.round(recentLogs.reduce((acc, log) => acc + log.moodLevel, 0) / recentLogs.length) %>
+            <% } else { %>
+              --
+            <% } %>
+          </div>
+          <div class="stat-label">متوسط المزاج</div>
+          <div class="stat-sublabel">من آخر تسجيلاتك</div>
+        </div>
+      </div>
+
+      <!-- Recent Logs Summary -->
+      <% if (recentLogs && recentLogs.length > 0) { %>
+        <div class="card slide-up" style="transition-delay: 0.3s;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
+            <h3 style="margin: 0;">
+              <span style="margin-left: var(--space-sm);">📈</span>
+              آخر التسجيلات
+            </h3>
+            <a href="/log" style="color: var(--primary-light); text-decoration: none; font-size: 0.9rem;">
+              عرض الكل →
+            </a>
+          </div>
+          
+          <div style="display: grid; gap: var(--space-md);">
+            <% recentLogs.slice(0, 3).forEach((log, index) => { %>
+              <div style="padding: var(--space-md); background: var(--bg-glass); border-radius: var(--radius-md); border: 1px solid var(--border-secondary);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                  <div style="color: var(--text-muted); font-size: 0.9rem;">
+                    <%= new Date(log.date).toLocaleDateString('ar-SA', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    }) %>
+                  </div>
+                  <div style="display: flex; gap: var(--space-md);">
+                    <div style="text-align: center;">
+                      <div style="font-size: 0.8rem; color: var(--text-muted);">المزاج</div>
+                      <div style="font-weight: 600; color: var(--success);"><%= log.moodLevel %>/10</div>
+                    </div>
+                    <div style="text-align: center;">
+                      <div style="font-size: 0.8rem; color: var(--text-muted);">الرغبة</div>
+                      <div style="font-weight: 600; color: var(--warning);"><%= log.urgeLevel %>/10</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <% if (log.notes) { %>
+                  <p style="color: var(--text-tertiary); font-size: 0.95rem; margin: var(--space-sm) 0; line-height: 1.5;">
+                    "<%= log.notes.substring(0, 100) %><%= log.notes.length > 100 ? '...' : '' %>"
+                  </p>
+                <% } %>
+                
+                <% if (log.activities && log.activities.length > 0) { %>
+                  <div style="margin-top: var(--space-sm);">
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: var(--space-xs);">الأنشطة:</div>
+                    <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+                      <% log.activities.forEach(activity => { %>
+                        <span style="display: inline-flex; align-items: center; gap: 4px; background: var(--primary-subtle); color: var(--primary-light); padding: 2px 8px; border-radius: var(--radius-sm); font-size: 0.75rem;">
+                          <%= activity === 'exercise' ? '🏃 رياضة' : 
+                              activity === 'meditation' ? '🧘 تأمل' :
+                              activity === 'reading' ? '📚 قراءة' :
+                              activity === 'socializing' ? '👥 تواصل' :
+                              activity === 'work' ? '💼 عمل' :
+                              activity === 'prayer' ? '🤲 صلاة' : '🔄 أخرى' %>
+                        </span>
+                      <% }) %>
+                    </div>
+                  </div>
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Daily Inspiration -->
+      <div class="card fade-in" style="background: var(--gradient-primary); color: white; text-align: center; margin: var(--space-2xl) 0;">
+        <div style="position: relative; z-index: 1;">
+          <h3 style="margin-bottom: var(--space-lg); font-size: 1.6rem; color: white;">
+            <span style="margin-left: var(--space-sm);">🌟</span>
+            آية للتأمل والتدبر
+          </h3>
+          <blockquote style="font-size: 1.5rem; margin-bottom: var(--space-lg); line-height: 1.8; font-weight: 500;">
+            "وَالَّذِينَ جَاهَدُوا فِينَا لَنَهْدِيَنَّهُمْ سُبُلَنَا ۚ وَإِنَّ اللَّهَ لَمَعَ الْمُحْسِنِينَ"
+          </blockquote>
+          <cite style="opacity: 0.9; font-size: 1.1rem; font-style: normal;">سورة العنكبوت، آية 69</cite>
+          <div style="margin-top: var(--space-md); font-size: 1rem; opacity: 0.8; font-style: italic;">
+            "من جاهد نفسه في طاعة الله، هداه الله طرق الخير والصلاح"
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Message -->
+      <% if (typeof req !== 'undefined' && req.query && req.query.logged === 'true') { %>
+        <div class="card fade-in" style="background: var(--gradient-success); color: white; text-align: center; margin: var(--space-xl) 0;">
+          <div style="position: relative; z-index: 1;">
+            <h3 style="margin-bottom: var(--space-md); color: white;">
+              <span style="margin-left: var(--space-sm);">✅</span>
+              تم حفظ تسجيلك بنجاح!
+            </h3>
+            <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 1.1rem;">
+              شكرًا لك على متابعة تقدمك. كل تسجيل يقربك أكثر من تحقيق أهدافك.
+            </p>
+          </div>
+        </div>
+      <% } %>
+    </main>
+  </div>
+
+  <!-- Emergency Support Modal -->
+  <div id="emergency-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl);">
+        <h2 style="margin: 0; display: flex; align-items: center; gap: var(--space-sm);">
+          <span>🆘</span>
+          <span>دعم طارئ</span>
+        </h2>
+        <button id="close-emergency" style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; padding: var(--space-xs);">&times;</button>
+      </div>
+      
+      <div style="text-align: center; margin-bottom: var(--space-xl);">
+        <div style="background: var(--gradient-primary); color: white; padding: var(--space-xl); border-radius: var(--radius-lg);">
+          <p style="font-size: 1.4rem; margin-bottom: var(--space-md); font-weight: 500; color: white; line-height: 1.6;">
+            "وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا"
+          </p>
+          <cite style="opacity: 0.9; color: white; font-size: 1rem;">سورة الطلاق، آية 2</cite>
+        </div>
+      </div>
+      
+      <div style="background: var(--bg-glass); border-radius: var(--radius-lg); padding: var(--space-xl); margin-bottom: var(--space-xl);">
+        <h3 style="margin-bottom: var(--space-lg); display: flex; align-items: center; gap: var(--space-sm); color: var(--text-primary);">
+          <span>🧘</span>
+          <span>تقنيات التهدئة الفورية</span>
+        </h3>
+        <div style="display: grid; gap: var(--space-md);">
+          <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-card); border-radius: var(--radius-md);">
+            <span style="font-size: 2rem;">🫁</span>
+            <div>
+              <div style="font-weight: 600; margin-bottom: var(--space-xs);">تنفس عميق</div>
+              <div style="color: var(--text-tertiary); font-size: 0.9rem;">خذ 5 أنفاس عميقة وبطيئة، احبس النفس لثانيتين</div>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-card); border-radius: var(--radius-md);">
+            <span style="font-size: 2rem;">💧</span>
+            <div>
+              <div style="font-weight: 600; margin-bottom: var(--space-xs);">اشرب الماء</div>
+              <div style="color: var(--text-tertiary); font-size: 0.9rem;">كوب من الماء البارد يساعد على التهدئة والتركيز</div>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-card); border-radius: var(--radius-md);">
+            <span style="font-size: 2rem;">🚶</span>
+            <div>
+              <div style="font-weight: 600; margin-bottom: var(--space-xs);">غير المكان</div>
+              <div style="color: var(--text-tertiary); font-size: 0.9rem;">اخرج للهواء الطلق أو انتقل لمكان آخر فوراً</div>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-card); border-radius: var(--radius-md);">
+            <span style="font-size: 2rem;">🤲</span>
+            <div>
+              <div style="font-weight: 600; margin-bottom: var(--space-xs);">ادع الله</div>
+              <div style="color: var(--text-tertiary); font-size: 0.9rem;">استغفر وادع الله أن يعينك ويقويك</div>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-card); border-radius: var(--radius-md);">
+            <span style="font-size: 2rem;">👥</span>
+            <div>
+              <div style="font-weight: 600; margin-bottom: var(--space-xs);">تواصل مع أحد</div>
+              <div style="color: var(--text-tertiary); font-size: 0.9rem;">اتصل بصديق أو أحد أفراد العائلة للدعم</div>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-card); border-radius: var(--radius-md);">
+            <span style="font-size: 2rem;">🎯</span>
+            <div>
+              <div style="font-weight: 600; margin-bottom: var(--space-xs);">تذكر هدفك</div>
+              <div style="color: var(--text-tertiary); font-size: 0.9rem;">لماذا بدأت هذه الرحلة؟ ما الذي تريد تحقيقه؟</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="text-align: center; padding: var(--space-xl); background: var(--gradient-success); color: white; border-radius: var(--radius-lg);">
+        <h4 style="margin-bottom: var(--space-md); color: white; font-size: 1.3rem;">💪 تذكر دائماً</h4>
+        <p style="font-weight: 600; font-size: 1.1rem; color: white; margin: 0; line-height: 1.5;">
+          هذه المرحلة ستمر وأنت أقوى من أي رغبة.<br>
+          كل مرة تقاوم فيها تصبح أقوى من السابق.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Relapse Confirmation Modal -->
+  <div id="relapse-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 450px;">
+      <div style="text-align: center; margin-bottom: var(--space-xl);">
+        <div style="font-size: 4rem; margin-bottom: var(--space-md);">🔄</div>
+        <h2 style="margin-bottom: var(--space-md); color: var(--danger);">تسجيل انتكاسة</h2>
+        <p style="color: var(--text-tertiary); line-height: 1.6;">
+          هل أنت متأكد من رغبتك في تسجيل انتكاسة؟ سيتم إعادة تعيين عداد الأيام النظيفة إلى الصفر.
+        </p>
+      </div>
+      
+      <div style="background: rgba(255, 184, 0, 0.1); border: 1px solid var(--warning); border-radius: var(--radius-md); padding: var(--space-lg); margin-bottom: var(--space-xl);">
+        <h4 style="color: var(--warning); margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-sm);">
+          <span>⚠️</span>
+          <span>قبل أن تقرر</span>
+        </h4>
+        <ul style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin: 0; padding-right: var(--space-lg);">
+          <li style="margin-bottom: var(--space-sm);">الانتكاسات جزء طبيعي من رحلة التعافي</li>
+          <li style="margin-bottom: var(--space-sm);">المهم هو العودة والاستمرار، وليس الكمال</li>
+          <li style="margin-bottom: var(--space-sm);">كل محاولة تجعلك أقوى وأكثر خبرة</li>
+          <li>غداً فرصة جديدة لبداية أفضل</li>
+        </ul>
+      </div>
+      
+      <div style="background: var(--gradient-primary); color: white; border-radius: var(--radius-md); padding: var(--space-lg); margin-bottom: var(--space-xl);">
+        <p style="color: white; text-align: center; margin: 0; font-weight: 500; line-height: 1.5;">
+          "وَمَن تَابَ وَعَمِلَ صَالِحًا فَإِنَّهُ يَتُوبُ إِلَى اللَّهِ مَتَابًا"<br>
+          <small style="opacity: 0.8;">سورة الفرقان، آية 71</small>
+        </p>
+      </div>
+      
+      <div style="display: flex; gap: var(--space-md); justify-content: center;">
+        <button id="confirm-relapse" class="btn btn-danger" style="padding: var(--space-md) var(--space-xl);">
+          <span>🔄</span>
+          <span>نعم، سجل الانتكاسة</span>
+        </button>
+        <button id="cancel-relapse" class="btn btn-secondary" style="padding: var(--space-md) var(--space-xl);">
+          <span>❌</span>
+          <span>لا، أريد المقاومة</span>
+        </button>
+      </div>
+      
+      <div style="text-align: center; margin-top: var(--space-lg);">
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          إذا كنت تشعر بصعوبة، جرب الضغط على "مساعدة طارئة" أولاً
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Enhanced Dashboard Manager
+    class EnhancedDashboardManager {
+      constructor() {
+        this.init();
+      }
+
+      init() {
+        this.setupScrollAnimations();
+        this.setupModals();
+        this.setupNavbarScroll();
+        this.setupNotifications();
+        this.cleanupURL();
+      }
+
+      setupScrollAnimations() {
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in, .slide-up, .scale-in').forEach(el => {
+          observer.observe(el);
+        });
+      }
+
+      setupModals() {
+        // Emergency Modal
+        const emergencyBtn = document.getElementById('emergency-btn');
+        const emergencyModal = document.getElementById('emergency-modal');
+        const closeEmergency = document.getElementById('close-emergency');
+
+        if (emergencyBtn && emergencyModal) {
+          emergencyBtn.addEventListener('click', () => {
+            emergencyModal.classList.add('show');
+            this.logEmergencyRequest();
+          });
+        }
+
+        if (closeEmergency && emergencyModal) {
+          closeEmergency.addEventListener('click', () => {
+            emergencyModal.classList.remove('show');
+          });
+        }
+
+        // Relapse Modal
+        const relapseBtn = document.getElementById('relapse-btn');
+        const relapseModal = document.getElementById('relapse-modal');
+        const confirmRelapse = document.getElementById('confirm-relapse');
+        const cancelRelapse = document.getElementById('cancel-relapse');
+
+        if (relapseBtn && relapseModal) {
+          relapseBtn.addEventListener('click', () => {
+            relapseModal.classList.add('show');
+          });
+        }
+
+        if (confirmRelapse) {
+          confirmRelapse.addEventListener('click', () => {
+            this.handleRelapse();
+          });
+        }
+
+        if (cancelRelapse && relapseModal) {
+          cancelRelapse.addEventListener('click', () => {
+            relapseModal.classList.remove('show');
+            this.showNotification('قرار حكيم! أنت أقوى من رغباتك 💪', 'success');
+          });
+        }
+
+        // Close modals on overlay click
+        [emergencyModal, relapseModal].forEach(modal => {
+          if (modal) {
+            modal.addEventListener('click', (e) => {
+              if (e.target === modal) {
+                modal.classList.remove('show');
+              }
+            });
+          }
+        });
+
+        // Close modals on Escape key
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.show').forEach(modal => {
+              modal.classList.remove('show');
+            });
+          }
+        });
+      }
+
+      setupNavbarScroll() {
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+          if (window.pageYOffset > 50) {
+            navbar.classList.add('scrolled');
+          } else {
+            navbar.classList.remove('scrolled');
+          }
+        });
+      }
+
+      setupNotifications() {
+        // Show notifications based on URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.get('welcome') === 'true') {
+          setTimeout(() => {
+            this.showNotification('مرحباً بك في نقاء! 🎉', 'success');
+          }, 1000);
+        }
+        
+        if (urlParams.get('logged') === 'true') {
+          setTimeout(() => {
+            this.showNotification('تم حفظ تسجيلك بنجاح! ✅', 'success');
+          }, 500);
+        }
+      }
+
+      cleanupURL() {
+        // Remove URL parameters after displaying notifications
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('welcome') === 'true' || urlParams.get('logged') === 'true') {
+          setTimeout(() => {
+            window.history.replaceState({}, document.title, '/dashboard');
+          }, 3000);
+        }
+      }
+
+      async logEmergencyRequest() {
+        try {
+          const response = await fetch('/api/emergency', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          
+          if (response.ok) {
+            console.log('تم تسجيل طلب المساعدة الطارئة');
+          }
+        } catch (error) {
+          console.error('خطأ في تسجيل طلب المساعدة:', error);
+        }
+      }
+
+      async handleRelapse() {
+        const confirmBtn = document.getElementById('confirm-relapse');
+        const originalText = confirmBtn.innerHTML;
+        
+        try {
+          // تغيير نص الزر أثناء المعالجة
+          confirmBtn.innerHTML = '<span class="loading"></span><span>جاري التسجيل...</span>';
+          confirmBtn.disabled = true;
+          
+          const response = await fetch('/api/relapse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            // إغلاق النافذة المنبثقة
+            document.getElementById('relapse-modal').classList.remove('show');
+            
+            // عرض رسالة تشجيعية
+            this.showNotification('تم تسجيل الانتكاسة. غداً بداية جديدة! 🌅', 'info');
+            
+            // تأخير إعادة التحميل لعرض الرسالة
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          } else {
+            throw new Error(data.message || 'فشل في تسجيل الانتكاسة');
+          }
+        } catch (error) {
+          console.error('خطأ في تسجيل الانتكاسة:', error);
+          
+          // استعادة الزر الأصلي
+          confirmBtn.innerHTML = originalText;
+          confirmBtn.disabled = false;
+          
+          // عرض رسالة خطأ
+          this.showNotification('حدث خطأ. يرجى المحاولة مرة أخرى.', 'error');
+        }
+      }
+
+      showNotification(message, type = 'info') {
+        // إزالة الإشعارات الموجودة
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notification => notification.remove());
+
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        
+        const colors = {
+          success: { bg: 'var(--gradient-success)', border: 'var(--border-success)' },
+          error: { bg: 'linear-gradient(135deg, #ff4757, #ff3838)', border: 'var(--border-danger)' },
+          warning: { bg: 'linear-gradient(135deg, #ffb800, #f39c12)', border: '#ffb800' },
+          info: { bg: 'var(--gradient-primary)', border: 'var(--border-accent)' }
+        };
+        
+        const color = colors[type] || colors.info;
+        
+        notification.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          max-width: 400px;
+          z-index: 15000;
+          transform: translateX(100%);
+          transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        `;
+        
+        notification.innerHTML = `
+          <div style="
+            background: ${color.bg};
+            color: white;
+            border: 1px solid ${color.border};
+            border-radius: var(--radius-lg);
+            padding: var(--space-md) var(--space-lg);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-sm);
+          ">
+            <span style="font-weight: 500;">${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" style="
+              background: none;
+              border: none;
+              color: white;
+              font-size: 1.25rem;
+              cursor: pointer;
+              padding: var(--space-xs);
+              border-radius: var(--radius-sm);
+              opacity: 0.8;
+              transition: opacity 0.2s ease;
+            " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">×</button>
+          </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // إظهار الإشعار
+        requestAnimationFrame(() => {
+          notification.style.transform = 'translateX(0)';
+        });
+        
+        // إخفاء الإشعار تلقائياً
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+              if (notification.parentNode) {
+                notification.remove();
+              }
+            }, 400);
+          }
+        }, 5000);
+      }
+    }
+
+    // Initialize Enhanced Dashboard
+    document.addEventListener('DOMContentLoaded', () => {
+      new EnhancedDashboardManager();
+      
+      // تطبيق الأنيميشن تدريجياً
+      setTimeout(() => {
+        document.querySelectorAll('.fade-in, .slide-up, .scale-in').forEach((el, index) => {
+          setTimeout(() => {
+            el.classList.add('visible');
+          }, index * 100);
+        });
+      }, 200);
+    });
+  </script>
+</body>
+</html>

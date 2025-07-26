@@ -1,0 +1,13 @@
+احذف node_modules
+
+git init
+
+git remote add origin https://github.com/Tandxx/naqaa-app.git
+
+git add .
+
+git commit -m "done"
+
+git branch -M main
+
+git push origin main --force

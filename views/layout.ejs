@@ -1,0 +1,74 @@
+<!-- views/layout.ejs -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'نقاء' %> - naqaa</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="description" content="نقاء - تطبيق تحسين الذات وترك العادات السيئة">
+  <style>
+    body { font-family: 'Noto Sans Arabic', sans-serif; }
+  </style>
+</head>
+<body>
+  <% if (typeof user !== 'undefined' && user) { %>
+    <nav class="navbar">
+      <div class="container">
+        <a href="/dashboard" class="logo">نقاء</a>
+        <ul class="nav-links">
+          <li><a href="/dashboard">الرئيسية</a></li>
+          <li><a href="/log">تسجيل يومي</a></li>
+          <li><a href="/resources">المصادر</a></li>
+          <li><a href="/settings">الإعدادات</a></li>
+          <li>
+            <form action="/logout" method="POST" style="display: inline;">
+              <button type="submit" class="btn btn-secondary">تسجيل خروج</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  <% } %>
+
+  <main>
+    <%- body %>
+  </main>
+
+  <!-- Emergency Modal -->
+  <div id="emergency-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" style="float: left; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+      <h2>دعم طارئ</h2>
+      <div style="text-align: center; margin: 2rem 0;">
+        <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">
+          "وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا"
+        </p>
+        <p style="color: var(--text-secondary);">سورة الطلاق، آية 2</p>
+      </div>
+      
+      <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+        <h3>تقنيات التهدئة السريعة:</h3>
+        <ul style="margin-top: 1rem;">
+          <li>خذ 5 أنفاس عميقة</li>
+          <li>اشرب كوبًا من الماء البارد</li>
+          <li>اخرج للهواء الطلق</li>
+          <li>تذكر سبب بدايتك لهذا التحدي</li>
+          <li>تواصل مع صديق أو أحد أفراد العائلة</li>
+        </ul>
+      </div>
+      
+      <div style="text-align: center;">
+        <p style="font-weight: 600; color: var(--primary-color);">
+          هذه المرحلة ستمر. أنت أقوى من رغباتك.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

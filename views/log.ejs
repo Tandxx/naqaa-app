@@ -1,0 +1,358 @@
+<!-- views/log.ejs - مصحح بالكامل -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>التسجيل اليومي - نقاء</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      font-family: 'Noto Sans Arabic', 'Space Grotesk', sans-serif; 
+    }
+    
+    /* إصلاح مشكلة التفاعل */
+    .activity-checkbox {
+      pointer-events: auto !important;
+      z-index: 10;
+      position: relative;
+    }
+    
+    .activity-label {
+      cursor: pointer;
+      user-select: none;
+      pointer-events: auto !important;
+      z-index: 10;
+      position: relative;
+    }
+    
+    .activity-label:hover {
+      background: var(--bg-glass-strong) !important;
+      border-color: var(--border-accent) !important;
+    }
+    
+    .form-control {
+      pointer-events: auto !important;
+      z-index: 10;
+      position: relative;
+    }
+    
+    button {
+      pointer-events: auto !important;
+      z-index: 10;
+      position: relative;
+    }
+    
+    /* تحسين التفاعل */
+    * {
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="navbar" id="navbar">
+      <div class="container">
+        <a href="/dashboard" class="logo">
+          <img src="../image/1.png" alt="نقاء" class="logo-img">
+          <span>نقاء</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="/dashboard">الرئيسية</a></li>
+          <li><a href="/log" style="color: var(--primary-light);">تسجيل يومي</a></li>
+          <li><a href="/resources">المصادر</a></li>
+          <li><a href="/settings">الإعدادات</a></li>
+          <li>
+            <form action="/logout" method="POST" style="display: inline;">
+              <button type="submit" class="btn btn-secondary">تسجيل خروج</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="container section">
+      <div class="fade-in">
+        <h1 style="margin-bottom: var(--space-lg); text-align: center;">
+          <span style="font-size: 2rem; margin-left: var(--space-sm);">📝</span>
+          التسجيل اليومي
+        </h1>
+      </div>
+
+      <% if (errors && errors.length > 0) { %>
+        <div class="alert alert-danger">
+          <span>⚠️</span>
+          <div>
+            <% errors.forEach(error => { %>
+              <p style="margin: 0;"><%= error.msg %></p>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+
+      <% if (existingLog) { %>
+        <div class="alert alert-success">
+          <span>✅</span>
+          <span>تم تسجيل حالتك اليوم بالفعل. يمكنك تحديث المعلومات أدناه.</span>
+        </div>
+      <% } %>
+
+      <div class="card scale-in">
+        <form action="/log" method="POST" style="display: flex; flex-direction: column; gap: var(--space-lg);">
+          
+          <!-- Mood & Urge Levels -->
+          <div class="grid grid-2">
+            <div class="form-group">
+              <label for="moodLevel" class="form-label">
+                <span style="margin-left: var(--space-xs);">😊</span>
+                مستوى المزاج (1-10)
+              </label>
+              <input 
+                type="range" 
+                id="moodLevel" 
+                name="moodLevel" 
+                min="1" 
+                max="10" 
+                value="<%= formData.moodLevel || (existingLog && existingLog.moodLevel) || 5 %>"
+                class="form-control"
+                style="pointer-events: auto !important; z-index: 10; position: relative;"
+              >
+              <div style="text-align: center; margin-top: var(--space-sm);">
+                <div style="background: var(--gradient-success); color: white; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-lg); display: inline-block; font-weight: 600;">
+                  <span id="moodValue"><%= formData.moodLevel || (existingLog && existingLog.moodLevel) || 5 %></span> / 10
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-top: var(--space-xs); color: var(--text-muted); font-size: 0.85rem;">
+                <span>😔 سيء جداً</span>
+                <span>😐 متوسط</span>
+                <span>😊 ممتاز</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="urgeLevel" class="form-label">
+                <span style="margin-left: var(--space-xs);">⚡</span>
+                مستوى الرغبة (1-10)
+              </label>
+              <input 
+                type="range" 
+                id="urgeLevel" 
+                name="urgeLevel" 
+                min="1" 
+                max="10" 
+                value="<%= formData.urgeLevel || (existingLog && existingLog.urgeLevel) || 5 %>"
+                class="form-control"
+                style="pointer-events: auto !important; z-index: 10; position: relative;"
+              >
+              <div style="text-align: center; margin-top: var(--space-sm);">
+                <div style="background: var(--gradient-primary); color: white; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-lg); display: inline-block; font-weight: 600;">
+                  <span id="urgeValue"><%= formData.urgeLevel || (existingLog && existingLog.urgeLevel) || 5 %></span> / 10
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-top: var(--space-xs); color: var(--text-muted); font-size: 0.85rem;">
+                <span>🟢 لا توجد</span>
+                <span>🟡 متوسطة</span>
+                <span>🔴 قوية جداً</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activities Section -->
+          <div class="form-group">
+            <label class="form-label">
+              <span style="margin-left: var(--space-xs);">🎯</span>
+              الأنشطة التي قمت بها اليوم
+            </label>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-sm); margin-top: var(--space-md);">
+              <% 
+              const activities = ['exercise', 'meditation', 'reading', 'socializing', 'work', 'prayer', 'other'];
+              const activityLabels = {
+                exercise: '🏃 رياضة',
+                meditation: '🧘 تأمل',
+                reading: '📚 قراءة', 
+                socializing: '👥 تواصل اجتماعي',
+                work: '💼 عمل',
+                prayer: '🤲 صلاة',
+                other: '🔄 أخرى'
+              };
+              const selectedActivities = (formData && formData.activities) || (existingLog && existingLog.activities) || [];
+              %>
+              <% activities.forEach(activity => { %>
+                <label class="activity-label" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm); background: var(--bg-glass); border: 1px solid var(--border-primary); border-radius: var(--radius-md); cursor: pointer; transition: var(--transition-smooth); pointer-events: auto !important; z-index: 10; position: relative;">
+                  <input 
+                    type="checkbox" 
+                    name="activities" 
+                    value="<%= activity %>"
+                    class="activity-checkbox"
+                    <%= selectedActivities.includes(activity) ? 'checked' : '' %>
+                    style="accent-color: var(--primary); pointer-events: auto !important; z-index: 15; position: relative;"
+                  >
+                  <span style="font-weight: 500; pointer-events: none;"><%= activityLabels[activity] %></span>
+                </label>
+              <% }) %>
+            </div>
+          </div>
+
+          <!-- Notes Section -->
+          <div class="form-group">
+            <label for="notes" class="form-label">
+              <span style="margin-left: var(--space-xs);">💭</span>
+              ملاحظات شخصية
+            </label>
+            <textarea 
+              id="notes" 
+              name="notes" 
+              class="form-control" 
+              rows="4" 
+              maxlength="500" 
+              placeholder="كيف كان يومك؟ ما التحديات التي واجهتها؟ ما الإنجازات التي حققتها؟ شاركنا أفكارك..."
+              style="resize: vertical; min-height: 120px; pointer-events: auto !important; z-index: 10; position: relative;"
+            ><%= (formData && formData.notes) || (existingLog && existingLog.notes) || '' %></textarea>
+            <div style="display: flex; justify-content: space-between; margin-top: var(--space-xs);">
+              <small style="color: var(--text-muted);">شارك أفكارك ومشاعرك بحرية</small>
+              <small style="color: var(--text-muted);" id="charCount">0 / 500</small>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div style="text-align: center; margin-top: var(--space-lg);">
+            <button type="submit" class="btn btn-primary" style="padding: var(--space-md) var(--space-2xl); font-size: 1.1rem; pointer-events: auto !important; z-index: 10; position: relative;">
+              <span><%= existingLog ? '💾' : '✨' %></span>
+              <span><%= existingLog ? 'تحديث التسجيل' : 'حفظ التسجيل' %></span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div style="text-align: center; margin-top: var(--space-xl);">
+        <a href="/dashboard" class="btn btn-secondary" style="pointer-events: auto !important; z-index: 10; position: relative;">
+          <span>🏠</span>
+          <span>العودة للرئيسية</span>
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function updateMoodValue(value) {
+      document.getElementById('moodValue').textContent = value;
+    }
+
+    function updateUrgeValue(value) {
+      document.getElementById('urgeValue').textContent = value;
+    }
+
+    // Character count for notes
+    document.addEventListener('DOMContentLoaded', () => {
+      const notesTextarea = document.getElementById('notes');
+      const charCount = document.getElementById('charCount');
+      const moodRange = document.getElementById('moodLevel');
+      const urgeRange = document.getElementById('urgeLevel');
+      
+      // Update character count
+      function updateCharCount() {
+        const count = notesTextarea.value.length;
+        charCount.textContent = `${count} / 500`;
+        
+        if (count > 450) {
+          charCount.style.color = 'var(--warning)';
+        } else if (count > 400) {
+          charCount.style.color = 'var(--text-muted)';
+        } else {
+          charCount.style.color = 'var(--text-muted)';
+        }
+      }
+      
+      // Update range values
+      function setupRangeUpdates() {
+        moodRange.addEventListener('input', (e) => {
+          updateMoodValue(e.target.value);
+        });
+        
+        urgeRange.addEventListener('input', (e) => {
+          updateUrgeValue(e.target.value);
+        });
+      }
+      
+      // Setup activity checkboxes
+      function setupActivityCheckboxes() {
+        const activityLabels = document.querySelectorAll('.activity-label');
+        
+        activityLabels.forEach(label => {
+          const checkbox = label.querySelector('.activity-checkbox');
+          
+          // Handle label click
+          label.addEventListener('click', (e) => {
+            // إذا لم يكن النقر على الـ checkbox نفسه
+            if (e.target !== checkbox) {
+              e.preventDefault();
+              checkbox.checked = !checkbox.checked;
+            }
+          });
+          
+          // Handle hover effects
+          label.addEventListener('mouseenter', () => {
+            label.style.background = 'var(--bg-glass-strong)';
+            label.style.borderColor = 'var(--border-accent)';
+          });
+          
+          label.addEventListener('mouseleave', () => {
+            label.style.background = 'var(--bg-glass)';
+            label.style.borderColor = 'var(--border-primary)';
+          });
+        });
+      }
+      
+      // Initialize everything
+      notesTextarea.addEventListener('input', updateCharCount);
+      updateCharCount(); // Initial count
+      setupRangeUpdates();
+      setupActivityCheckboxes();
+
+      // Enhanced animations
+      const card = document.querySelector('.card');
+      setTimeout(() => {
+        card.classList.add('visible');
+      }, 100);
+
+      // Form submission animation
+      const form = document.querySelector('form');
+      form.addEventListener('submit', (e) => {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const existingLog = <%= existingLog ? 'true' : 'false' %>;
+        
+        submitBtn.innerHTML = existingLog ? 
+          '<span class="loading"></span><span>جاري التحديث...</span>' : 
+          '<span class="loading"></span><span>جاري الحفظ...</span>';
+        submitBtn.disabled = true;
+      });
+
+      // Navbar scroll effect
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+      });
+
+      // Fix any pointer-events issues
+      document.body.style.pointerEvents = 'auto';
+      
+      // Make sure all interactive elements work
+      const interactiveElements = document.querySelectorAll('input, button, select, textarea, a, label');
+      interactiveElements.forEach(el => {
+        el.style.pointerEvents = 'auto';
+        el.style.zIndex = '10';
+        el.style.position = 'relative';
+      });
+      
+      console.log('صفحة التسجيل جاهزة للتفاعل');
+    });
+  </script>
+</body>
+</html>

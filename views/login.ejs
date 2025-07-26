@@ -1,0 +1,417 @@
+<!-- views/login.ejs - تم تحديثه لاستخدام اللوقو -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل دخول - نقاء</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      font-family: 'Noto Sans Arabic', 'Space Grotesk', sans-serif; 
+    }
+    
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      pointer-events: auto !important;
+    }
+    
+    .auth-card {
+      width: 100%;
+      max-width: 450px;
+      background: var(--gradient-card);
+      border: 1px solid var(--border-primary);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-xl);
+      pointer-events: auto !important;
+      position: relative;
+      z-index: 10;
+    }
+    
+    /* إصلاح العناصر التفاعلية */
+    .form-control, .btn, button, input, a {
+      pointer-events: auto !important;
+      z-index: 100 !important;
+      position: relative !important;
+      cursor: pointer !important;
+    }
+    
+    .form-control {
+      background: var(--bg-input) !important;
+      border: 1px solid var(--border-primary) !important;
+      color: var(--text-primary) !important;
+      transition: all 0.3s ease;
+      min-height: 45px !important;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 0 3px var(--primary-subtle) !important;
+      outline: none !important;
+    }
+    
+    .btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: var(--space-sm) !important;
+      min-height: 48px !important;
+      font-weight: 600 !important;
+      border-radius: var(--radius-md) !important;
+      transition: all 0.3s ease !important;
+      text-decoration: none !important;
+      border: none !important;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px) !important;
+      text-decoration: none !important;
+    }
+    
+    .btn-primary {
+      background: var(--gradient-primary) !important;
+      color: white !important;
+      box-shadow: var(--shadow-glow) !important;
+    }
+    
+    .btn-primary:hover {
+      box-shadow: var(--shadow-glow-strong) !important;
+      color: white !important;
+    }
+    
+    .btn-secondary {
+      background: var(--bg-card) !important;
+      color: var(--text-secondary) !important;
+      border: 1px solid var(--border-primary) !important;
+    }
+    
+    .btn-secondary:hover {
+      background: var(--bg-card-hover) !important;
+      color: var(--text-primary) !important;
+      border-color: var(--border-accent) !important;
+    }
+    
+    /* تحسين الأنيميشن */
+    .auth-card.visible {
+      animation: slideInUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    /* تحسين الهيدر */
+    .auth-header {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+    }
+    
+    .auth-title {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    
+    .auth-subtitle {
+      color: var(--text-tertiary);
+      font-size: 1rem;
+      margin: 0;
+    }
+    
+    /* تحسين النموذج */
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      pointer-events: auto !important;
+    }
+    
+    .form-group {
+      pointer-events: auto !important;
+    }
+    
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    
+    .form-hint {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: var(--space-xs);
+      display: block;
+    }
+    
+    /* تحسين التذييل */
+    .auth-footer {
+      text-align: center;
+      margin-top: var(--space-xl);
+      padding-top: var(--space-lg);
+      border-top: 1px solid var(--border-primary);
+    }
+    
+    .auth-footer p {
+      color: var(--text-tertiary);
+      margin-bottom: var(--space-md);
+      font-size: 0.9rem;
+    }
+    
+    .auth-footer a {
+      color: var(--primary-light);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .auth-footer a:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+    
+    /* روابط إضافية */
+    .additional-links {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
+    
+    .forgot-password-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: var(--space-sm);
+      border-radius: var(--radius-md);
+      transition: all 0.3s ease;
+    }
+    
+    .forgot-password-link:hover {
+      color: var(--primary-light);
+      background: var(--bg-glass);
+      text-decoration: none;
+    }
+    
+    /* إصلاح الـ alerts */
+    .alert {
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-lg);
+      border: 1px solid;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    
+    .alert-danger {
+      background: rgba(255, 71, 87, 0.1);
+      border-color: var(--border-danger);
+      color: var(--danger);
+    }
+    
+    .alert-success {
+      background: rgba(0, 255, 136, 0.1);
+      border-color: var(--border-success);
+      color: var(--success);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .auth-container {
+        padding: var(--space-md);
+      }
+      
+      .auth-card {
+        max-width: 100%;
+        padding: var(--space-lg);
+      }
+      
+      .auth-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper auth-container">
+    <div class="auth-card" id="authCard">
+      <div class="auth-header">
+        <img src="../image/1.png" alt="نقاء" class="auth-logo-img">
+        <h1 class="auth-title">نقاء</h1>
+        <p class="auth-subtitle">مرحبًا بعودتك في رحلة التحسن</p>
+      </div>
+
+      <% if (errors && errors.length > 0) { %>
+        <div class="alert alert-danger">
+          <span>⚠️</span>
+          <div>
+            <% errors.forEach(error => { %>
+              <p style="margin: 0;"><%= error.msg %></p>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- إشعار نجاح إعادة تعيين كلمة المرور -->
+      <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('reset') === 'success') {
+          document.addEventListener('DOMContentLoaded', () => {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'alert alert-success';
+            successDiv.innerHTML = '<span>✅</span><span>تم إعادة تعيين كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول</span>';
+            
+            const form = document.querySelector('.auth-form');
+            form.parentNode.insertBefore(successDiv, form);
+            
+            // إزالة معامل URL
+            window.history.replaceState({}, document.title, '/login');
+          });
+        }
+      </script>
+
+      <form action="/login" method="POST" class="auth-form">
+        <div class="form-group">
+          <label for="loginField" class="form-label">
+            <span>👤</span>
+            <span>اسم المستخدم أو البريد الإلكتروني</span>
+          </label>
+          <input 
+            type="text" 
+            id="loginField" 
+            name="loginField" 
+            class="form-control" 
+            value="<%= formData.loginField || '' %>"
+            placeholder="أدخل اسم المستخدم أو البريد الإلكتروني"
+            required
+            autocomplete="username"
+          >
+          <small class="form-hint">يمكنك استخدام اسم المستخدم أو البريد الإلكتروني</small>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">
+            <span>🔒</span>
+            <span>كلمة المرور</span>
+          </label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-control" 
+            placeholder="أدخل كلمة المرور"
+            required
+            autocomplete="current-password"
+          >
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: var(--space-md); font-size: 1.1rem;">
+          <span>🚀</span>
+          <span>تسجيل دخول</span>
+        </button>
+
+        <div class="additional-links">
+          <a href="/forgot-password" class="forgot-password-link">
+            <span>🔑</span>
+            <span>نسيت كلمة المرور؟</span>
+          </a>
+        </div>
+      </form>
+
+      <div class="auth-footer">
+        <p>ليس لديك حساب؟</p>
+        <a href="/register" class="btn btn-secondary">
+          <span>✨</span>
+          <span>إنشاء حساب جديد</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🔑 تحميل صفحة تسجيل الدخول...');
+      
+      const authCard = document.getElementById('authCard');
+      const form = document.querySelector('.auth-form');
+      
+      // إضافة الأنيميشن
+      setTimeout(() => {
+        authCard.classList.add('visible');
+      }, 100);
+
+      // تحسين التفاعل مع النموذج
+      const inputs = form.querySelectorAll('.form-control');
+      inputs.forEach(input => {
+        input.style.pointerEvents = 'auto';
+        input.style.zIndex = '100';
+        input.style.position = 'relative';
+        
+        input.addEventListener('focus', function() {
+          this.parentElement.style.transform = 'translateY(-2px)';
+          this.style.borderColor = 'var(--primary)';
+        });
+        
+        input.addEventListener('blur', function() {
+          this.parentElement.style.transform = 'translateY(0)';
+          if (!this.matches(':invalid')) {
+            this.style.borderColor = 'var(--border-primary)';
+          }
+        });
+      });
+
+      // تحسين الأزرار
+      const buttons = document.querySelectorAll('.btn, button');
+      buttons.forEach(btn => {
+        btn.style.pointerEvents = 'auto';
+        btn.style.zIndex = '100';
+        btn.style.position = 'relative';
+        btn.style.cursor = 'pointer';
+        
+        btn.addEventListener('mouseenter', function() {
+          if (!this.disabled) {
+            this.style.transform = 'translateY(-2px)';
+          }
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+          this.style.transform = 'translateY(0)';
+        });
+      });
+
+      // معالجة إرسال النموذج
+      form.addEventListener('submit', (e) => {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<span class="loading"></span><span>جاري التحقق...</span>';
+        submitBtn.disabled = true;
+        submitBtn.style.cursor = 'not-allowed';
+      });
+      
+      console.log('✅ صفحة تسجيل الدخول جاهزة');
+    });
+  </script>
+</body>
+</html>
